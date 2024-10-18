@@ -1,0 +1,99 @@
+CREATE TABLE anexo (
+    id_anexo             INTEGER NOT NULL,
+    numero_anexo         INTEGER NOT NULL,
+    cargo_fijo           NUMBER(10, 2) NOT NULL,
+    estado_anexo         VARCHAR2(30) NOT NULL,
+    usuario_id_usuario   INTEGER NOT NULL,
+    codunidad_id_codigo  INTEGER NOT NULL
+);
+
+ALTER TABLE anexo ADD CONSTRAINT anexo_pk PRIMARY KEY ( id_anexo );
+
+CREATE TABLE codunidad (
+    id_codigo           INTEGER NOT NULL,
+    nombre_codigo       VARCHAR2(30) NOT NULL,
+    ctapresu_id_cuenta  INTEGER NOT NULL
+);
+
+ALTER TABLE codunidad ADD CONSTRAINT codunidad_pk PRIMARY KEY ( id_codigo );
+
+CREATE TABLE ctapresu (
+    id_cuenta      INTEGER NOT NULL,
+    nombre_cuenta  VARCHAR2(30) NOT NULL
+);
+
+ALTER TABLE ctapresu ADD CONSTRAINT ctapresu_pk PRIMARY KEY ( id_cuenta );
+
+CREATE TABLE llamada (
+    id_llamada              INTEGER NOT NULL,
+    origen_llamada          INTEGER NOT NULL,
+    destino_llamada         INTEGER NOT NULL,
+    identificador_llamada   INTEGER NOT NULL,
+    app_llamada             VARCHAR2(30) NOT NULL,
+    inicio_llamada          DATE NOT NULL,
+    duracion_llamada        INTEGER NOT NULL,
+    segundos_facturados     INTEGER NOT NULL,
+    disposicion             VARCHAR2(30) NOT NULL,
+    tipo_llamada            VARCHAR2(20) NOT NULL,
+    proveedor_id_proveedor  INTEGER NOT NULL,
+    anexo_id_anexo          INTEGER NOT NULL
+);
+
+ALTER TABLE llamada ADD CONSTRAINT llamada_pk PRIMARY KEY ( id_llamada );
+
+CREATE TABLE proveedor (
+    id_proveedor      INTEGER NOT NULL,
+    nombre_proveedor  VARCHAR2(30) NOT NULL,
+    tarifa_cel        NUMBER(10, 2),
+    tarifa_slm        NUMBER(10, 2),
+    tarifa_ldi        NUMBER(10, 2)
+);
+
+ALTER TABLE proveedor ADD CONSTRAINT proveedor_pk PRIMARY KEY ( id_proveedor );
+
+CREATE TABLE tarificacion (
+    id_tarificacion  INTEGER NOT NULL,
+    fecha_inicio     DATE NOT NULL,
+    fecha_termino    DATE NOT NULL,
+    costo_total      NUMBER(12, 2) NOT NULL,
+    minutos_totales  INTEGER NOT NULL,
+    tipo_llamada     VARCHAR2(20) NOT NULL,
+    anexo_id_anexo   INTEGER NOT NULL
+);
+
+ALTER TABLE tarificacion ADD CONSTRAINT tarificacion_pk PRIMARY KEY ( id_tarificacion );
+
+CREATE TABLE usuario (
+    id_usuario     INTEGER NOT NULL,
+    username       VARCHAR2(30) NOT NULL,
+    password       VARCHAR2(30) NOT NULL,
+    rol_usuario    VARCHAR2(30) NOT NULL,
+    email_usuario  VARCHAR2(30)
+);
+
+ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id_usuario );
+
+ALTER TABLE anexo
+    ADD CONSTRAINT anexo_codunidad_fk FOREIGN KEY ( codunidad_id_codigo )
+        REFERENCES codunidad ( id_codigo );
+
+ALTER TABLE anexo
+    ADD CONSTRAINT anexo_usuario_fk FOREIGN KEY ( usuario_id_usuario )
+        REFERENCES usuario ( id_usuario );
+
+ALTER TABLE codunidad
+    ADD CONSTRAINT codunidad_ctapresu_fk FOREIGN KEY ( ctapresu_id_cuenta )
+        REFERENCES ctapresu ( id_cuenta );
+
+ALTER TABLE llamada
+    ADD CONSTRAINT llamada_anexo_fk FOREIGN KEY ( anexo_id_anexo )
+        REFERENCES anexo ( id_anexo );
+
+ALTER TABLE llamada
+    ADD CONSTRAINT llamada_proveedor_fk FOREIGN KEY ( proveedor_id_proveedor )
+        REFERENCES proveedor ( id_proveedor );
+
+ALTER TABLE tarificacion
+    ADD CONSTRAINT tarificacion_anexo_fk FOREIGN KEY ( anexo_id_anexo )
+        REFERENCES anexo ( id_anexo );
+
